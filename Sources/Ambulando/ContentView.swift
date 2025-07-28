@@ -4,7 +4,6 @@ import NDKSwift
 struct ContentView: View {
     @EnvironmentObject var nostrManager: NostrManager
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var blossomServerManager: BlossomServerManager
     
     var body: some View {
         let authManager = NDKAuthManager.shared
@@ -43,8 +42,8 @@ struct ContentView: View {
         .environment(\.ndk, nostrManager.ndk)
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
             if isAuthenticated {
-                blossomServerManager.loadServers()
-                blossomServerManager.loadSuggestedServers()
+                // Blossom server manager loads automatically when accessed
+                // through nostrManager.ndk.blossomServerManager
             }
         }
     }

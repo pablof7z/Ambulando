@@ -140,7 +140,7 @@ struct RelaySelectorView: View {
                     }
                     
                 case .relayRemoved(let url):
-                    await MainActor.run {
+                    _ = await MainActor.run {
                         self.relayStates.removeAll { $0.url == url }
                     }
                     

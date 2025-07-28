@@ -27,7 +27,7 @@ struct SettingsView: View {
                 }
                 .foregroundColor(.white)
                 
-                NavigationLink(destination: BlossomSettingsView(ndk: nostrManager.ndk)) {
+                NavigationLink(destination: BlossomSettingsView()) {
                     Label("Blossom Servers", systemImage: "icloud.and.arrow.up")
                         .foregroundColor(.white)
                 }

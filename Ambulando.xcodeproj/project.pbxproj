@@ -3,14 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		022334D1E6E5EF6B134DE81F /* OutboxDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E014D779A031D24E4FF79 /* OutboxDebugView.swift */; };
-		249A28DF157159D1F6D955D0 /* FootprintShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BE20E42A5FF44F8F6474E3 /* FootprintShape.swift */; };
-		271719FB2E3457AA00D6C9B5 /* NDKSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 271719FA2E3457AA00D6C9B5 /* NDKSwift */; };
-		271719FD2E3457AA00D6C9B5 /* NDKSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 271719FC2E3457AA00D6C9B5 /* NDKSwiftUI */; };
 		43C7B50D99B5C868319AB4EE /* DebugMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2A4229476EB811956E6EFE /* DebugMenuView.swift */; };
 		5511C09ACA070962CB621F61 /* AudioEventCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5473110F8264627A9244A1 /* AudioEventCard.swift */; };
 		5FD6DCA195E74B81683F34A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0C26F4C0CF10084774F9D6 /* SettingsView.swift */; };
@@ -20,7 +17,6 @@
 		7426EA2556C77AD0339A2A4F /* AccountSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACAB827FBC2C5CA35CB459D /* AccountSectionView.swift */; };
 		78FA43B32651E3615CF77689 /* AmbulandoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FE9D5696A6E05FE836BFD8 /* AmbulandoApp.swift */; };
 		7E246B57EBA7AF1AD9A696CD /* NDKSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EED89BD365615F8998AA3242 /* NDKSwift */; };
-		85412F6E4B319AB036FBF352 /* BlossomServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62541B17CE71A7A4B125CA3A /* BlossomServerManager.swift */; };
 		95AAB8407E4E2E0AB59F49C4 /* HomeFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ACBDA15CF63B3A9077085D /* HomeFeedView.swift */; };
 		9B7D96924DA0D5295A50ECCB /* AmbulandoIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1485D5DEA7B94E27834E9511 /* AmbulandoIcon.swift */; };
 		9C02DE80BDD4CCDA034A81C6 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF7788D6E052D390D316E64 /* AuthenticationView.swift */; };
@@ -33,7 +29,7 @@
 		C74ABEA5FB557BB9F6D2ED22 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4B7A71085ECC842166EC2A /* UserProfileView.swift */; };
 		C89B78CADB123AAA45265969 /* OutboxSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF27595D00E5FB49638F39E2 /* OutboxSummaryCard.swift */; };
 		CA5DEEA3B9283A08DCDEF960 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8730300DC8F6407011501C1 /* QRScannerView.swift */; };
-		D96DA34E80D2700657F00B51 /* BlossomServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0038B83064586770C1C5D40 /* BlossomServerInfo.swift */; };
+		D752BE8B8908AD9F5650987B /* FootprintShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47604B97DB0A79D9FC148452 /* FootprintShape.swift */; };
 		DCC976787632FA4645BF97C4 /* OutboxUserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680709E37CD070394AD2CD01 /* OutboxUserDetailView.swift */; };
 		FC5C22336E6D1B01543000F1 /* RelayManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D327AE47C6BE93A1E6A5E67 /* RelayManagementView.swift */; };
 /* End PBXBuildFile section */
@@ -43,17 +39,14 @@
 		0E5473110F8264627A9244A1 /* AudioEventCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEventCard.swift; sourceTree = "<group>"; };
 		1485D5DEA7B94E27834E9511 /* AmbulandoIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbulandoIcon.swift; sourceTree = "<group>"; };
 		30FE9D5696A6E05FE836BFD8 /* AmbulandoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbulandoApp.swift; sourceTree = "<group>"; };
+		47604B97DB0A79D9FC148452 /* FootprintShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootprintShape.swift; sourceTree = "<group>"; };
 		48DA45732180540F6399645F /* OutboxDebugModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxDebugModels.swift; sourceTree = "<group>"; };
 		4DF7788D6E052D390D316E64 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
-		62541B17CE71A7A4B125CA3A /* BlossomServerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomServerManager.swift; sourceTree = "<group>"; };
 		680709E37CD070394AD2CD01 /* OutboxUserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxUserDetailView.swift; sourceTree = "<group>"; };
 		6D327AE47C6BE93A1E6A5E67 /* RelayManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayManagementView.swift; sourceTree = "<group>"; };
 		7439A7A820FF1C56156C8808 /* BlossomSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomSettingsView.swift; sourceTree = "<group>"; };
-		7C884713AB4C1011923BE1DE /* NDKSwift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NDKSwift; path = ../../..; sourceTree = SOURCE_ROOT; };
 		84ACBDA15CF63B3A9077085D /* HomeFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedView.swift; sourceTree = "<group>"; };
 		8A0E014D779A031D24E4FF79 /* OutboxDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxDebugView.swift; sourceTree = "<group>"; };
-		90BE20E42A5FF44F8F6474E3 /* FootprintShape.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FootprintShape.swift; path = Shapes/FootprintShape.swift; sourceTree = "<group>"; };
-		B0038B83064586770C1C5D40 /* BlossomServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomServerInfo.swift; sourceTree = "<group>"; };
 		BA4B7A71085ECC842166EC2A /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		BACAB827FBC2C5CA35CB459D /* AccountSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSectionView.swift; sourceTree = "<group>"; };
 		C2EB32927133739C81DDAB7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -64,7 +57,7 @@
 		F751E8B652B93B2F5BE5AD4D /* BlossomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomError.swift; sourceTree = "<group>"; };
 		F8730300DC8F6407011501C1 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		FE0C26F4C0CF10084774F9D6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		FE2D765C25D12BB981DAD154 /* Ambulando.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ambulando.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE2D765C25D12BB981DAD154 /* Ambulando.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ambulando.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FED3C47E58834D0F5C347C20 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FF27595D00E5FB49638F39E2 /* OutboxSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxSummaryCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -76,8 +69,6 @@
 			files = (
 				7E246B57EBA7AF1AD9A696CD /* NDKSwift in Frameworks */,
 				BA27F5036BA736E6CECDA922 /* NDKSwiftUI in Frameworks */,
-				271719FD2E3457AA00D6C9B5 /* NDKSwiftUI in Frameworks */,
-				271719FB2E3457AA00D6C9B5 /* NDKSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +104,6 @@
 		31B7817D3BFCC7599BA3ED44 = {
 			isa = PBXGroup;
 			children = (
-				74D8A8AD872921F06BED2252 /* Packages */,
 				09564F7E36EA2A5343A305FF /* Sources */,
 				410520FDB09D9871F496FE8F /* Products */,
 			);
@@ -132,27 +122,17 @@
 			children = (
 				09770ACCC6787B681BE7BC20 /* AudioEvent.swift */,
 				F751E8B652B93B2F5BE5AD4D /* BlossomError.swift */,
-				B0038B83064586770C1C5D40 /* BlossomServerInfo.swift */,
-				62541B17CE71A7A4B125CA3A /* BlossomServerManager.swift */,
 				48DA45732180540F6399645F /* OutboxDebugModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		74D8A8AD872921F06BED2252 /* Packages */ = {
+		69FA35379AF2643B344DACED /* Shapes */ = {
 			isa = PBXGroup;
 			children = (
-				7C884713AB4C1011923BE1DE /* NDKSwift */,
+				47604B97DB0A79D9FC148452 /* FootprintShape.swift */,
 			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
-		7DAE0896CE8C2CC0D4CFEA92 /* Shapes */ = {
-			isa = PBXGroup;
-			children = (
-				90BE20E42A5FF44F8F6474E3 /* FootprintShape.swift */,
-			);
-			name = Shapes;
+			path = Shapes;
 			sourceTree = "<group>";
 		};
 		92585BC1AD9AE58F64D68E88 /* Debug */ = {
@@ -183,9 +163,9 @@
 				FED3C47E58834D0F5C347C20 /* ContentView.swift */,
 				C2EB32927133739C81DDAB7A /* Info.plist */,
 				536F9A9C8FF20C7A6654F4EE /* Models */,
+				69FA35379AF2643B344DACED /* Shapes */,
 				C837575E247DFF16EE12FD62 /* ViewModels */,
 				0FE24EEE17431CE2BF4343A6 /* Views */,
-				7DAE0896CE8C2CC0D4CFEA92 /* Shapes */,
 			);
 			path = Ambulando;
 			sourceTree = "<group>";
@@ -209,8 +189,6 @@
 			packageProductDependencies = (
 				EED89BD365615F8998AA3242 /* NDKSwift */,
 				BF65A70242AE2F78A7054E0F /* NDKSwiftUI */,
-				271719FA2E3457AA00D6C9B5 /* NDKSwift */,
-				271719FC2E3457AA00D6C9B5 /* NDKSwiftUI */,
 			);
 			productName = Ambulando;
 			productReference = FE2D765C25D12BB981DAD154 /* Ambulando.app */;
@@ -226,6 +204,7 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					1F2B7092E17210D5C8FA3E2C = {
+						DevelopmentTeam = 456SHKPP26;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -239,10 +218,11 @@
 				en,
 			);
 			mainGroup = 31B7817D3BFCC7599BA3ED44;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				60A26706FEB7A73F66E92502 /* XCLocalSwiftPackageReference ".." */,
+				2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */,
 			);
-			productRefGroup = 410520FDB09D9871F496FE8F /* Products */;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -274,11 +254,10 @@
 				5511C09ACA070962CB621F61 /* AudioEventCard.swift in Sources */,
 				9C02DE80BDD4CCDA034A81C6 /* AuthenticationView.swift in Sources */,
 				BD99C789CF90EB76CEC9B937 /* BlossomError.swift in Sources */,
-				D96DA34E80D2700657F00B51 /* BlossomServerInfo.swift in Sources */,
-				85412F6E4B319AB036FBF352 /* BlossomServerManager.swift in Sources */,
 				7214A9EA11B340A673BD7D12 /* BlossomSettingsView.swift in Sources */,
 				B36F867C9D97F37DD5ABF064 /* ContentView.swift in Sources */,
 				43C7B50D99B5C868319AB4EE /* DebugMenuView.swift in Sources */,
+				D752BE8B8908AD9F5650987B /* FootprintShape.swift in Sources */,
 				95AAB8407E4E2E0AB59F49C4 /* HomeFeedView.swift in Sources */,
 				B024E150B5E74841EB77B52A /* OutboxDebugModels.swift in Sources */,
 				022334D1E6E5EF6B134DE81F /* OutboxDebugView.swift in Sources */,
@@ -290,7 +269,6 @@
 				6DB3398FF0FD28F11BA31BBC /* RelaySelectorView.swift in Sources */,
 				5FD6DCA195E74B81683F34A4 /* SettingsView.swift in Sources */,
 				C74ABEA5FB557BB9F6D2ED22 /* UserProfileView.swift in Sources */,
-				249A28DF157159D1F6D955D0 /* FootprintShape.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +280,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 456SHKPP26;
@@ -314,6 +292,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ambulando.app;
 				PRODUCT_NAME = Ambulando;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -446,7 +425,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 456SHKPP26;
@@ -458,6 +437,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ambulando.app;
 				PRODUCT_NAME = Ambulando;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
@@ -488,28 +468,26 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		60A26706FEB7A73F66E92502 /* XCLocalSwiftPackageReference ".." */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../;
+/* Begin XCRemoteSwiftPackageReference section */
+		2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pablof7z/NDKSwift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		271719FA2E3457AA00D6C9B5 /* NDKSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NDKSwift;
-		};
-		271719FC2E3457AA00D6C9B5 /* NDKSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NDKSwiftUI;
-		};
 		BF65A70242AE2F78A7054E0F /* NDKSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */;
 			productName = NDKSwiftUI;
 		};
 		EED89BD365615F8998AA3242 /* NDKSwift */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */;
 			productName = NDKSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

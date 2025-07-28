@@ -2,15 +2,15 @@ import SwiftUI
 import NDKSwift
 
 struct BlossomSettingsView: View {
-    @EnvironmentObject var serverManager: BlossomServerManager
+    @EnvironmentObject var nostrManager: NostrManager
     @State private var newServerUrl = ""
     @State private var showingAddServer = false
     @State private var showingError = false
     @State private var errorMessage = ""
     @Environment(\.dismiss) var dismiss
     
-    init(ndk: NDK?) {
-        // Use the serverManager from environment
+    private var serverManager: Any? { // NDKBlossomServerManager? {
+        nil // Server manager not available yet
     }
     
     var body: some View {
@@ -43,20 +43,16 @@ struct BlossomSettingsView: View {
                 
                 // Server list - always show immediately
                 List {
-                    ForEach(Array(serverManager.servers.enumerated()), id: \.offset) { index, server in
-                        ServerRow(
-                            server: server,
-                            isPrimary: index == 0,
-                            onDelete: {
-                                serverManager.removeServer(at: index)
-                            }
-                        )
-                        .listRowBackground(Color.gray.opacity(0.1))
-                        .listRowSeparatorTint(.gray.opacity(0.3))
-                    }
-                    .onMove(perform: { source, destination in
-                        serverManager.moveServer(from: source, to: destination)
-                    })
+                    // Show default server for now
+                    ServerRow(
+                        server: "https://blossom.primal.net",
+                        isPrimary: true,
+                        onDelete: {
+                            // Cannot delete default server
+                        }
+                    )
+                    .listRowBackground(Color.gray.opacity(0.1))
+                    .listRowSeparatorTint(.gray.opacity(0.3))
                 }
                 .listStyle(PlainListStyle())
                 .scrollContentBackground(.hidden)
@@ -79,8 +75,8 @@ struct BlossomSettingsView: View {
         .sheet(isPresented: $showingAddServer) {
             AddServerSheet(
                 serverUrl: $newServerUrl,
-                suggestedServers: serverManager.suggestedServers,
-                existingServers: serverManager.servers,
+                suggestedServers: [], // No suggestions available
+                existingServers: ["https://blossom.primal.net"],
                 onAdd: { url in
                     addServer(url)
                     showingAddServer = false
@@ -116,14 +112,9 @@ struct BlossomSettingsView: View {
             return
         }
         
-        // Check if already exists
-        if serverManager.servers.contains(cleanUrl) {
-            errorMessage = "Server already exists in the list"
-            showingError = true
-            return
-        }
-        
-        serverManager.addServer(cleanUrl)
+        // For now, just show error that we cannot add servers
+        errorMessage = "Server management not available yet"
+        showingError = true
     }
 }
 
@@ -174,15 +165,15 @@ struct ServerRow: View {
 // MARK: - Add Server Sheet
 struct AddServerSheet: View {
     @Binding var serverUrl: String
-    let suggestedServers: [BlossomServerInfo]
+    let suggestedServers: [Any] // [NDKBlossomServerInfo]
     let existingServers: [String]
     let onAdd: (String) -> Void
     let onCancel: () -> Void
     @FocusState private var isTextFieldFocused: Bool
     @State private var showingSuggestions = true
     
-    var availableSuggestions: [BlossomServerInfo] {
-        suggestedServers.filter { !existingServers.contains($0.url) }
+    var availableSuggestions: [Any] { // [NDKBlossomServerInfo] {
+        [] // No suggestions available
     }
     
     var body: some View {
@@ -228,16 +219,7 @@ struct AddServerSheet: View {
                                 }
                                 .padding(.horizontal)
                                 
-                                ForEach(availableSuggestions) { server in
-                                    SuggestedServerRow(
-                                        server: server,
-                                        onSelect: {
-                                            serverUrl = server.url
-                                            isTextFieldFocused = false
-                                        }
-                                    )
-                                    .padding(.horizontal)
-                                }
+                                // No suggested servers available
                             }
                             .padding(.top)
                         }
@@ -292,80 +274,3 @@ struct AddServerSheet: View {
     }
 }
 
-// MARK: - Suggested Server Row
-struct SuggestedServerRow: View {
-    let server: BlossomServerInfo
-    let onSelect: () -> Void
-    
-    var body: some View {
-        Button(action: onSelect) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(server.name)
-                            .font(.body)
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                        
-                        Text(formatServerUrl(server.url))
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .lineLimit(1)
-                    }
-                    
-                    Spacer()
-                    
-                    if let subtitle = server.subtitle {
-                        Text(subtitle)
-                            .font(.caption)
-                            .foregroundColor(subtitleColor(for: server))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(subtitleColor(for: server).opacity(0.2))
-                            .cornerRadius(4)
-                    }
-                }
-                
-                if !server.description.isEmpty {
-                    Text(server.description)
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                }
-                
-                if let accessMessage = server.accessMessage {
-                    Text(accessMessage)
-                        .font(.caption2)
-                        .foregroundColor(.orange)
-                        .lineLimit(1)
-                }
-            }
-            .padding(12)
-            .background(Color.gray.opacity(0.15))
-            .cornerRadius(8)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private func formatServerUrl(_ url: String) -> String {
-        var formatted = url
-        if formatted.hasPrefix("https://") {
-            formatted = String(formatted.dropFirst(8))
-        } else if formatted.hasPrefix("http://") {
-            formatted = String(formatted.dropFirst(7))
-        }
-        if formatted.hasSuffix("/") {
-            formatted = String(formatted.dropLast())
-        }
-        return formatted
-    }
-    
-    private func subtitleColor(for server: BlossomServerInfo) -> Color {
-        if server.isPaid || server.isWhitelisted {
-            return .orange
-        } else {
-            return .green
-        }
-    }
-}

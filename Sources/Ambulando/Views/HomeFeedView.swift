@@ -6,7 +6,6 @@ import AVFoundation
 struct HomeFeedView: View {
     @EnvironmentObject var nostrManager: NostrManager
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var blossomServerManager: BlossomServerManager
     
     @State private var audioEvents: [AudioEvent] = []
     @State private var showRecordingHint = true
@@ -376,7 +375,8 @@ struct HomeFeedView: View {
                 var uploadResult: String? = nil
                 var uploadError: Error? = nil
                 
-                for server in blossomServerManager.allServers {
+                let servers = ["https://blossom.primal.net"] // Default to primal.net for now
+                for server in servers {
                     do {
                         // Create blossom client and upload
                         let blossomClient = BlossomClient()

@@ -5,13 +5,6 @@ import NDKSwift
 struct AmbulandoApp: App {
     @StateObject private var nostrManager = NostrManager()
     @StateObject private var appState = AppState()
-    @StateObject private var blossomServerManager: BlossomServerManager
-    
-    init() {
-        let manager = NostrManager()
-        self._nostrManager = StateObject(wrappedValue: manager)
-        self._blossomServerManager = StateObject(wrappedValue: BlossomServerManager(ndk: manager.ndk))
-    }
     
     var body: some Scene {
         WindowGroup {
@@ -20,7 +13,6 @@ struct AmbulandoApp: App {
             .preferredColorScheme(.dark)
             .environmentObject(nostrManager)
             .environmentObject(appState)
-            .environmentObject(blossomServerManager)
         }
     }
 }
@@ -102,6 +94,8 @@ class NostrManager: ObservableObject {
             // Setup session restoration
             Task {
                 await ndk.connect()
+                
+                // Auth manager will restore sessions automatically when needed
                 
                 // Observe authentication state changes
                 _ = withObservationTracking {
