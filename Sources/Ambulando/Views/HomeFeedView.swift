@@ -47,7 +47,7 @@ struct HomeFeedView: View {
                 // Header
                 HeaderView(selectedRelay: $selectedRelay, showRelaySelector: $showRelaySelector)
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.bottom, 8)
                 
                 // Feed - Always show UI immediately, no loading states
                 if audioEvents.isEmpty {
@@ -449,7 +449,7 @@ struct HomeFeedView: View {
         Task {
             do {
                 // Download and play the audio
-                let (data, _) = try await URLSession.shared.data(from: url)
+                let (data, _) = try await URLSession.ambulando.data(from: url)
                 
                 await MainActor.run {
                     do {
@@ -590,7 +590,7 @@ struct HeaderView: View {
                 // Relay icon if available
                 if let icon = selectedRelayInfo?.icon,
                    let iconURL = URL(string: icon) {
-                    AsyncImage(url: iconURL) { image in
+                    AmbulandoAsyncImage(url: iconURL) { image in
                         image
                             .resizable()
                             .scaledToFill()
@@ -861,7 +861,7 @@ struct RecordingOverlay: View {
                             .foregroundColor(Color.white.opacity(0.6))
                         
                         HStack {
-                            NDKProfilePicture(pubkey: replyingTo.author.pubkey, size: 32)
+                            NDKUIProfilePicture(pubkey: replyingTo.author.pubkey, size: 32)
                             
                             VStack(alignment: .leading) {
                                 Text(String(replyingTo.author.pubkey.prefix(8)))
