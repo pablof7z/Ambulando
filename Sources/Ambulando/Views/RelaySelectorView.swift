@@ -1,5 +1,6 @@
 import SwiftUI
 import NDKSwift
+import NDKSwiftUI
 
 struct RelaySelectorView: View {
     @EnvironmentObject var nostrManager: NostrManager
@@ -59,7 +60,7 @@ struct RelaySelectorView: View {
                 VStack(spacing: 0) {
                     ForEach(relayStates) { relay in
                         RelaySelectorRowView(
-                            title: relay.info?.name ?? formatRelayUrl(relay.url),
+                            title: relay.info?.name ?? relay.url.formattedRelayURL,
                             subtitle: relay.isConnected ? "Connected" : "Disconnected",
                             isSelected: selectedRelay == relay.url,
                             isConnected: relay.isConnected,
@@ -92,19 +93,6 @@ struct RelaySelectorView: View {
         }
     }
     
-    private func formatRelayUrl(_ url: String) -> String {
-        // Remove wss:// prefix and trailing slash for cleaner display
-        var formatted = url
-        if formatted.hasPrefix("wss://") {
-            formatted = String(formatted.dropFirst(6))
-        } else if formatted.hasPrefix("ws://") {
-            formatted = String(formatted.dropFirst(5))
-        }
-        if formatted.hasSuffix("/") {
-            formatted = String(formatted.dropLast())
-        }
-        return formatted
-    }
     
     private func startObservingRelays() {
         guard let ndk = nostrManager.ndk else { return }
@@ -178,7 +166,7 @@ struct RelaySelectorRowView: View {
             HStack(spacing: 12) {
                 // Relay icon if available
                 if let iconURL = iconURL, let url = URL(string: iconURL) {
-                    AsyncImage(url: url) { image in
+                    CachedAsyncImage(url: url) { image in
                         image
                             .resizable()
                             .scaledToFill()

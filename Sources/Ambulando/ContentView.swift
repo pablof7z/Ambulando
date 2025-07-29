@@ -7,7 +7,7 @@ struct ContentView: View {
     
     var body: some View {
         let authManager = NDKAuthManager.shared
-        let isAuth = authManager.authenticationState == .authenticated && authManager.activeSession != nil && authManager.activeSigner != nil
+        let isAuth = authManager.hasActiveSession && authManager.activeSession != nil && authManager.activeSigner != nil
         
         ZStack {
             Color.black.ignoresSafeArea()
@@ -40,8 +40,8 @@ struct ContentView: View {
             checkAuthentication()
         }
         .environment(\.ndk, nostrManager.ndk)
-        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-            if isAuthenticated {
+        .onChange(of: authManager.hasActiveSession) { _, hasActiveSession in
+            if hasActiveSession {
                 // Blossom server manager loads automatically when accessed
                 // through nostrManager.ndk.blossomServerManager
             }

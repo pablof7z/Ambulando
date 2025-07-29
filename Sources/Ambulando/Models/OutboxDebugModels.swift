@@ -65,7 +65,7 @@ struct OutboxSummary {
 struct OutboxEntry: Identifiable {
     let id = UUID()
     let pubkey: String
-    let displayName: String?
+    var displayName: String?
     let npub: String
     let readRelays: [RelayDisplayInfo]
     let writeRelays: [RelayDisplayInfo]

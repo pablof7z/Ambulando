@@ -32,7 +32,7 @@ struct AudioEventCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 13) {
             // Author avatar using NDKSwiftUI component
-            NDKProfilePicture(pubkey: audioEvent.author.pubkey, size: 44)
+            NDKUIProfilePicture(pubkey: audioEvent.author.pubkey, size: 44)
                 .onTapGesture {
                     showingUserProfile = true
                 }
@@ -495,11 +495,11 @@ struct AudioPlayerView: View {
                                         endPoint: .bottom
                                     )
                                 )
-                                .frame(width: max(1, geometry.size.width / CGFloat(waveform.count) - 1), 
-                                       height: barHeight)
+                                .frame(width: 3, height: barHeight)
                         }
                     }
-                    .frame(height: 36)
+                    .frame(maxWidth: geometry.size.width, maxHeight: 36, alignment: .leading)
+                    .clipped()
                 } else {
                     // Fallback to simple progress bar
                     Capsule()
@@ -721,7 +721,7 @@ struct ReactionsDrawer: View {
     
     private func reactionRow(for reaction: NDKEvent) -> some View {
         HStack(spacing: 12) {
-            NDKProfilePicture(pubkey: reaction.pubkey, size: 40)
+            NDKUIProfilePicture(pubkey: reaction.pubkey, size: 40)
             
             profileInfo(for: reaction.pubkey)
             

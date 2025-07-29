@@ -27,43 +27,43 @@ class OutboxDebugViewModel: ObservableObject {
             return
         }
         
-        isLoading = true
-        errorMessage = nil
+        // Get cached items immediately
+        let cachedItems = await ndk.outbox.getAllTrackedItems()
+        if !cachedItems.isEmpty {
+            // Show cached data immediately
+            let entries = await processOutboxItems(cachedItems)
+            self.outboxEntries = entries
+            self.summary = calculateSummary(from: entries, stats: RelayUpdateStats(activeSubscriptions: 0, totalUnknownAuthors: 0, totalUpdateSubscriptions: 0))
+            isLoading = false
+        }
         
-        // Get current outbox statistics
+        // Start streaming profile names
+        Task {
+            await streamProfileNames()
+        }
+        
+        // Get fresh stats
         let stats = await ndk.outbox.getRelayUpdateStats()
         
-        // Get all tracked outbox items
-        let outboxItems = await getAllOutboxItems()
+        // Update summary with fresh stats
+        self.summary = calculateSummary(from: outboxEntries, stats: stats)
         
-        // Process entries and calculate summary
-        let entries = await processOutboxItems(outboxItems)
-        let summaryData = calculateSummary(from: entries, stats: stats)
-        
-        // Update UI
-        self.outboxEntries = entries
-        self.summary = summaryData
-        
-        isLoading = false
+        // Mark as loaded if it wasn't already
+        if isLoading {
+            isLoading = false
+        }
         
         // Start real-time updates
         startRealtimeUpdates()
     }
     
-    private func getAllOutboxItems() async -> [NDKOutboxItem] {
-        guard let ndk = ndk else { return [] }
-        
-        // Get all tracked items from the outbox manager
-        return await ndk.outbox.getAllTrackedItems()
-    }
     
     private func processOutboxItems(_ items: [NDKOutboxItem]) async -> [OutboxEntry] {
         var entries: [OutboxEntry] = []
         
         for item in items {
-            // Try to get display name from profile cache
-            let displayName = await getDisplayName(for: item.pubkey)
-            let entry = OutboxEntry(from: item, displayName: displayName)
+            // Skip display name fetching for now
+            let entry = OutboxEntry(from: item, displayName: nil)
             entries.append(entry)
         }
         
@@ -71,17 +71,26 @@ class OutboxDebugViewModel: ObservableObject {
         return entries.sorted { $0.lastUpdated > $1.lastUpdated }
     }
     
-    private func getDisplayName(for pubkey: String) async -> String? {
-        guard let ndk = ndk else { return nil }
+    private func streamProfileNames() async {
+        guard let ndk = ndk else { return }
         
-        // Attempt to get profile from cache (don't fetch if not available)
-        for await profile in await ndk.profileManager.observe(for: pubkey, maxAge: TimeConstants.hour) {
-            if let profile = profile {
-                return profile.name ?? profile.displayName
+        // Stream profile updates for all tracked users
+        for entry in outboxEntries {
+            Task {
+                for await profile in await ndk.profileManager.observe(for: entry.pubkey, maxAge: TimeConstants.hour) {
+                    if let profile = profile,
+                       let displayName = profile.name ?? profile.displayName {
+                        // Update the entry with the display name
+                        await MainActor.run {
+                            if let index = self.outboxEntries.firstIndex(where: { $0.pubkey == entry.pubkey }) {
+                                self.outboxEntries[index].displayName = displayName
+                            }
+                        }
+                    }
+                    break // Only need the first result
+                }
             }
         }
-        
-        return nil
     }
     
     private func calculateSummary(from entries: [OutboxEntry], stats: RelayUpdateStats) -> OutboxSummary {
@@ -117,15 +126,13 @@ class OutboxDebugViewModel: ObservableObject {
         // Update existing entry or add new one
         if let index = outboxEntries.firstIndex(where: { $0.pubkey == update.pubkey }) {
             // Update existing entry
-            let displayName = await getDisplayName(for: update.pubkey)
-            let mockItem = createMockOutboxItem(from: update, displayName: displayName)
-            let updatedEntry = OutboxEntry(from: mockItem, displayName: displayName)
+            let mockItem = createMockOutboxItem(from: update, displayName: nil)
+            let updatedEntry = OutboxEntry(from: mockItem, displayName: nil)
             outboxEntries[index] = updatedEntry
         } else {
             // Add new entry
-            let displayName = await getDisplayName(for: update.pubkey)
-            let mockItem = createMockOutboxItem(from: update, displayName: displayName)
-            let newEntry = OutboxEntry(from: mockItem, displayName: displayName)
+            let mockItem = createMockOutboxItem(from: update, displayName: nil)
+            let newEntry = OutboxEntry(from: mockItem, displayName: nil)
             outboxEntries.append(newEntry)
         }
         

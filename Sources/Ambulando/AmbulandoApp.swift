@@ -54,96 +54,60 @@ class AppState: ObservableObject {
 
 // MARK: - Nostr Manager
 @MainActor
-class NostrManager: ObservableObject {
-    @Published var ndk: NDK?
-    @Published var authenticationState: NDKAuthManager.AuthenticationState = .unauthenticated
+class NostrManager: NDKNostrManager {
+    @Published var blossomServerManager: NDKBlossomServerManager?
     
-    private var ndkAuthManager: NDKAuthManager
-    private var authStateObservation: Task<Void, Never>?
+    // MARK: - Configuration Overrides
     
-    // Recommended relays for Ambulando
-    let defaultRelays = [
-        RelayConstants.primal,
-        RelayConstants.damus,
-        RelayConstants.nosLol,
-        RelayConstants.nostrBand,
-        RelayConstants.nostrWine
-    ]
-    
-    // Key for storing user-added relays
-    private static let userRelaysKey = "AmbulandoUserAddedRelays"
-    
-    init() {
-        self.ndkAuthManager = NDKAuthManager.shared
-        setupNDK()
+    override var defaultRelays: [String] {
+        [
+            RelayConstants.primal,
+            RelayConstants.damus,
+            RelayConstants.nosLol,
+            RelayConstants.nostrBand,
+            RelayConstants.nostrWine
+        ]
     }
     
-    private func setupNDK() {
-        let allRelays = getAllRelays()
-        ndk = NDK(relayUrls: allRelays)
+    override var userRelaysKey: String {
+        "AmbulandoUserAddedRelays"
+    }
+    
+    override var clientTagConfig: NDKClientTagConfig? {
+        NDKClientTagConfig(
+            name: "Ambulando",
+            autoTag: true
+        )
+    }
+    
+    override var sessionConfiguration: NDKSessionConfiguration {
+        NDKSessionConfiguration(
+            dataRequirements: [.followList, .muteList, .webOfTrust(depth: 2)],
+            preloadStrategy: .progressive
+        )
+    }
+    
+    
+    override init() {
+        super.init()
         
+        // Enable verbose NDK logging in debug builds
+        #if DEBUG
+        NDKLogger.logLevel = .debug
+        NDKLogger.enabledCategories = Set(NDKLogCategory.allCases)
+        print("🚀 [Ambulando] NDK logging enabled - Level: trace, Categories: all")
+        #endif
+    }
+    
+    override func setupNDK() async {
+        await super.setupNDK()
+        
+        // Initialize Blossom server manager
         if let ndk = ndk {
-            // Configure client tag
-            ndk.clientTagConfig = NDKClientTagConfig(
-                name: "Ambulando",
-                autoTag: true
-            )
-            
-            ndkAuthManager.setNDK(ndk)
-            
-            // Setup session restoration
-            Task {
-                await ndk.connect()
-                
-                // Auth manager will restore sessions automatically when needed
-                
-                // Observe authentication state changes
-                _ = withObservationTracking {
-                    ndkAuthManager.authenticationState
-                } onChange: { [weak self] in
-                    Task { @MainActor in
-                        await self?.handleAuthStateChange()
-                    }
-                }
-                
-                await handleAuthStateChange()
-            }
+            blossomServerManager = NDKBlossomServerManager(ndk: ndk)
         }
     }
     
-    private func handleAuthStateChange() async {
-        switch ndkAuthManager.authenticationState {
-        case .authenticated:
-            // If authenticated, ensure signer is set on NDK
-            if let activeSigner = ndkAuthManager.activeSigner {
-                ndk?.signer = activeSigner
-                // Start session if not already started
-                if ndk?.sessionData == nil {
-                    do {
-                        _ = try await ndk?.startSession(
-                            signer: activeSigner,
-                            config: NDKSessionConfiguration(
-                                dataRequirements: [.followList, .muteList, .webOfTrust(depth: 2)],
-                                preloadStrategy: .progressive
-                            )
-                        )
-                    } catch {
-                        // Session start failed
-                    }
-                }
-            }
-            
-        case .unauthenticated:
-            // Clear signer if unauthenticated
-            ndk?.signer = nil
-            
-        default:
-            break
-        }
-        
-        // Trigger UI update
-        objectWillChange.send()
-    }
     
     func login(with signer: NDKSigner) async throws -> NDKSessionData {
         guard let ndk = ndk else { throw NostrError.signerRequired }
@@ -176,10 +140,9 @@ class NostrManager: ObservableObject {
             
             // Create or update session with auth manager for persistence
             if let privateSigner = signer as? NDKPrivateKeySigner {
-                _ = try await ndkAuthManager.createSession(
-                    with: privateSigner,
-                    requiresBiometric: false,
-                    isHardwareBacked: false
+                _ = try await NDKAuthManager.shared.addSession(
+                    privateSigner,
+                    requiresBiometric: false
                 )
             }
             
@@ -187,69 +150,21 @@ class NostrManager: ObservableObject {
         }
     }
     
-    func logout() {
-        Task {
-            // Clear all sessions from keychain
-            for session in ndkAuthManager.availableSessions {
-                try? await ndkAuthManager.deleteSession(session)
-            }
-        }
-        
-        // Clear active authentication state
-        ndkAuthManager.logout()
-        
-        // Clear NDK signer
-        ndk?.signer = nil
-    }
     
-    // Check if user is authenticated via NDKAuth
-    var isAuthenticated: Bool {
-        // Must have both auth manager authenticated AND signer loaded
-        ndkAuthManager.isAuthenticated && ndk?.signer != nil
-    }
+    // isAuthenticated is now handled by parent class
     
     // Get auth manager for use in UI
     var authManager: NDKAuthManager {
-        return ndkAuthManager
+        return NDKAuthManager.shared
     }
     
     // MARK: - Relay Management
     
-    /// Get all relays (default + user-added)
-    private func getAllRelays() -> [String] {
-        let userRelays = getUserAddedRelays()
-        let allRelays = defaultRelays + userRelays
-        return Array(Set(allRelays)) // Remove duplicates
-    }
+    // Relay management is now handled by parent class
     
-    /// Get user-added relays from UserDefaults
-    private func getUserAddedRelays() -> [String] {
-        return UserDefaults.standard.stringArray(forKey: Self.userRelaysKey) ?? []
-    }
+    // Use parent class methods for relay management
     
-    /// Add a user relay and persist it
-    func addUserRelay(_ relayURL: String) {
-        var userRelays = getUserAddedRelays()
-        guard !userRelays.contains(relayURL) && !defaultRelays.contains(relayURL) else {
-            print("Relay \(relayURL) already exists")
-            return
-        }
-        
-        userRelays.append(relayURL)
-        UserDefaults.standard.set(userRelays, forKey: Self.userRelaysKey)
-    }
-    
-    /// Remove a user relay and persist the change
-    func removeUserRelay(_ relayURL: String) {
-        var userRelays = getUserAddedRelays()
-        userRelays.removeAll(value: relayURL)
-        UserDefaults.standard.set(userRelays, forKey: Self.userRelaysKey)
-    }
-    
-    /// Get list of user-added relays (for UI display)
-    var userAddedRelays: [String] {
-        return getUserAddedRelays()
-    }
+    // userAddedRelays is now handled by parent class
 }
 
 // MARK: - Errors

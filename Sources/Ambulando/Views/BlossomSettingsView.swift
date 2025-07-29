@@ -9,8 +9,8 @@ struct BlossomSettingsView: View {
     @State private var errorMessage = ""
     @Environment(\.dismiss) var dismiss
     
-    private var serverManager: Any? { // NDKBlossomServerManager? {
-        nil // Server manager not available yet
+    private var serverManager: NDKBlossomServerManager? {
+        nostrManager.blossomServerManager
     }
     
     var body: some View {
@@ -41,21 +41,38 @@ struct BlossomSettingsView: View {
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 
-                // Server list - always show immediately
-                List {
-                    // Show default server for now
-                    ServerRow(
-                        server: "https://blossom.primal.net",
-                        isPrimary: true,
-                        onDelete: {
-                            // Cannot delete default server
+                // Server list
+                if let manager = serverManager {
+                    List {
+                        ForEach(Array(manager.userServers.enumerated()), id: \.element) { index, server in
+                            ServerRow(
+                                server: server,
+                                isPrimary: index == 0,
+                                onDelete: {
+                                    manager.removeUserServer(server)
+                                }
+                            )
+                            .listRowBackground(Color.gray.opacity(0.1))
+                            .listRowSeparatorTint(.gray.opacity(0.3))
                         }
-                    )
-                    .listRowBackground(Color.gray.opacity(0.1))
-                    .listRowSeparatorTint(.gray.opacity(0.3))
+                        .onMove { source, destination in
+                            manager.moveUserServer(from: source, to: destination)
+                        }
+                    }
+                    .listStyle(PlainListStyle())
+                    .scrollContentBackground(.hidden)
+                } else {
+                    // Loading or no manager
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        Text("Loading servers...")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                        Spacer()
+                    }
                 }
-                .listStyle(PlainListStyle())
-                .scrollContentBackground(.hidden)
                 
                 // Instructions
                 VStack(alignment: .leading, spacing: 8) {
@@ -75,8 +92,8 @@ struct BlossomSettingsView: View {
         .sheet(isPresented: $showingAddServer) {
             AddServerSheet(
                 serverUrl: $newServerUrl,
-                suggestedServers: [], // No suggestions available
-                existingServers: ["https://blossom.primal.net"],
+                suggestedServers: Array(serverManager?.discoveredServers ?? []),
+                existingServers: serverManager?.userServers ?? [],
                 onAdd: { url in
                     addServer(url)
                     showingAddServer = false
@@ -112,9 +129,13 @@ struct BlossomSettingsView: View {
             return
         }
         
-        // For now, just show error that we cannot add servers
-        errorMessage = "Server management not available yet"
-        showingError = true
+        // Add server using server manager
+        if let manager = serverManager {
+            manager.addUserServer(cleanUrl)
+        } else {
+            errorMessage = "Server manager not available"
+            showingError = true
+        }
     }
 }
 
@@ -165,15 +186,15 @@ struct ServerRow: View {
 // MARK: - Add Server Sheet
 struct AddServerSheet: View {
     @Binding var serverUrl: String
-    let suggestedServers: [Any] // [NDKBlossomServerInfo]
+    let suggestedServers: [NDKBlossomServerInfo]
     let existingServers: [String]
     let onAdd: (String) -> Void
     let onCancel: () -> Void
     @FocusState private var isTextFieldFocused: Bool
     @State private var showingSuggestions = true
     
-    var availableSuggestions: [Any] { // [NDKBlossomServerInfo] {
-        [] // No suggestions available
+    var availableSuggestions: [NDKBlossomServerInfo] {
+        suggestedServers.filter { !existingServers.contains($0.url) }
     }
     
     var body: some View {
@@ -219,7 +240,37 @@ struct AddServerSheet: View {
                                 }
                                 .padding(.horizontal)
                                 
-                                // No suggested servers available
+                                ForEach(availableSuggestions, id: \.id) { server in
+                                    Button(action: {
+                                        serverUrl = server.url
+                                        isTextFieldFocused = true
+                                    }) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(server.name)
+                                                .font(.body)
+                                                .foregroundColor(.white)
+                                            
+                                            if !server.description.isEmpty {
+                                                Text(server.description)
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                                    .lineLimit(2)
+                                            }
+                                            
+                                            if let subtitle = server.subtitle {
+                                                Label(subtitle, systemImage: server.isPaid ? "dollarsign.circle" : "checkmark.circle")
+                                                    .font(.caption2)
+                                                    .foregroundColor(server.isPaid ? .orange : .green)
+                                            }
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding()
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                                .padding(.horizontal)
                             }
                             .padding(.top)
                         }

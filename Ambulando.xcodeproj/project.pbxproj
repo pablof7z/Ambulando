@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		022334D1E6E5EF6B134DE81F /* OutboxDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E014D779A031D24E4FF79 /* OutboxDebugView.swift */; };
+		4076DCC890112A6240ACC70F /* URLSessionConfiguration+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6593AC2A685B86532B6681 /* URLSessionConfiguration+UserAgent.swift */; };
 		43C7B50D99B5C868319AB4EE /* DebugMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2A4229476EB811956E6EFE /* DebugMenuView.swift */; };
 		5511C09ACA070962CB621F61 /* AudioEventCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5473110F8264627A9244A1 /* AudioEventCard.swift */; };
 		5FD6DCA195E74B81683F34A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0C26F4C0CF10084774F9D6 /* SettingsView.swift */; };
@@ -16,6 +17,7 @@
 		72919F905D6C5CE964D4F533 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFD3BC0ACAD0B1D48F9911DE /* Assets.xcassets */; };
 		7426EA2556C77AD0339A2A4F /* AccountSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACAB827FBC2C5CA35CB459D /* AccountSectionView.swift */; };
 		78FA43B32651E3615CF77689 /* AmbulandoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FE9D5696A6E05FE836BFD8 /* AmbulandoApp.swift */; };
+		7C3CD1B003D1B8D5F295FB47 /* ActiveSubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFFFC12161D03E06ED53DF3 /* ActiveSubscriptionsView.swift */; };
 		7E246B57EBA7AF1AD9A696CD /* NDKSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EED89BD365615F8998AA3242 /* NDKSwift */; };
 		95AAB8407E4E2E0AB59F49C4 /* HomeFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ACBDA15CF63B3A9077085D /* HomeFeedView.swift */; };
 		9B7D96924DA0D5295A50ECCB /* AmbulandoIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1485D5DEA7B94E27834E9511 /* AmbulandoIcon.swift */; };
@@ -29,8 +31,10 @@
 		C74ABEA5FB557BB9F6D2ED22 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4B7A71085ECC842166EC2A /* UserProfileView.swift */; };
 		C89B78CADB123AAA45265969 /* OutboxSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF27595D00E5FB49638F39E2 /* OutboxSummaryCard.swift */; };
 		CA5DEEA3B9283A08DCDEF960 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8730300DC8F6407011501C1 /* QRScannerView.swift */; };
+		CD3F864D202A927A027C607C /* CacheDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FF658D9B895B6E6BBC4113 /* CacheDebugView.swift */; };
 		D752BE8B8908AD9F5650987B /* FootprintShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47604B97DB0A79D9FC148452 /* FootprintShape.swift */; };
 		DCC976787632FA4645BF97C4 /* OutboxUserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680709E37CD070394AD2CD01 /* OutboxUserDetailView.swift */; };
+		FA953E254507A7F9060B53C6 /* NDKDebugLogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BA151C65519BCA16E01D16 /* NDKDebugLogsView.swift */; };
 		FC5C22336E6D1B01543000F1 /* RelayManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D327AE47C6BE93A1E6A5E67 /* RelayManagementView.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,9 +48,12 @@
 		4DF7788D6E052D390D316E64 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		680709E37CD070394AD2CD01 /* OutboxUserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxUserDetailView.swift; sourceTree = "<group>"; };
 		6D327AE47C6BE93A1E6A5E67 /* RelayManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayManagementView.swift; sourceTree = "<group>"; };
+		71BA151C65519BCA16E01D16 /* NDKDebugLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NDKDebugLogsView.swift; sourceTree = "<group>"; };
 		7439A7A820FF1C56156C8808 /* BlossomSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomSettingsView.swift; sourceTree = "<group>"; };
 		84ACBDA15CF63B3A9077085D /* HomeFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedView.swift; sourceTree = "<group>"; };
 		8A0E014D779A031D24E4FF79 /* OutboxDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxDebugView.swift; sourceTree = "<group>"; };
+		92FF658D9B895B6E6BBC4113 /* CacheDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheDebugView.swift; sourceTree = "<group>"; };
+		AC6593AC2A685B86532B6681 /* URLSessionConfiguration+UserAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+UserAgent.swift"; sourceTree = "<group>"; };
 		BA4B7A71085ECC842166EC2A /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		BACAB827FBC2C5CA35CB459D /* AccountSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSectionView.swift; sourceTree = "<group>"; };
 		C2EB32927133739C81DDAB7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +63,7 @@
 		EFD3BC0ACAD0B1D48F9911DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F751E8B652B93B2F5BE5AD4D /* BlossomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlossomError.swift; sourceTree = "<group>"; };
 		F8730300DC8F6407011501C1 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		FBFFFC12161D03E06ED53DF3 /* ActiveSubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSubscriptionsView.swift; sourceTree = "<group>"; };
 		FE0C26F4C0CF10084774F9D6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FE2D765C25D12BB981DAD154 /* Ambulando.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ambulando.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FED3C47E58834D0F5C347C20 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -127,6 +135,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		5969B25B340EFCF461C1BDE4 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				AC6593AC2A685B86532B6681 /* URLSessionConfiguration+UserAgent.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
 		69FA35379AF2643B344DACED /* Shapes */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,7 +154,10 @@
 		92585BC1AD9AE58F64D68E88 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
+				FBFFFC12161D03E06ED53DF3 /* ActiveSubscriptionsView.swift */,
+				92FF658D9B895B6E6BBC4113 /* CacheDebugView.swift */,
 				CC2A4229476EB811956E6EFE /* DebugMenuView.swift */,
+				71BA151C65519BCA16E01D16 /* NDKDebugLogsView.swift */,
 				8A0E014D779A031D24E4FF79 /* OutboxDebugView.swift */,
 				FF27595D00E5FB49638F39E2 /* OutboxSummaryCard.swift */,
 				680709E37CD070394AD2CD01 /* OutboxUserDetailView.swift */,
@@ -163,6 +182,7 @@
 				FED3C47E58834D0F5C347C20 /* ContentView.swift */,
 				C2EB32927133739C81DDAB7A /* Info.plist */,
 				536F9A9C8FF20C7A6654F4EE /* Models */,
+				5969B25B340EFCF461C1BDE4 /* Networking */,
 				69FA35379AF2643B344DACED /* Shapes */,
 				C837575E247DFF16EE12FD62 /* ViewModels */,
 				0FE24EEE17431CE2BF4343A6 /* Views */,
@@ -220,7 +240,7 @@
 			mainGroup = 31B7817D3BFCC7599BA3ED44;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */,
+				6691A0EE8D74A820F84BDB02 /* XCRemoteSwiftPackageReference "NDKSwift" */,
 			);
 			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
@@ -248,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7426EA2556C77AD0339A2A4F /* AccountSectionView.swift in Sources */,
+				7C3CD1B003D1B8D5F295FB47 /* ActiveSubscriptionsView.swift in Sources */,
 				78FA43B32651E3615CF77689 /* AmbulandoApp.swift in Sources */,
 				9B7D96924DA0D5295A50ECCB /* AmbulandoIcon.swift in Sources */,
 				A2E25874AB22A44AA3C678C5 /* AudioEvent.swift in Sources */,
@@ -255,10 +276,12 @@
 				9C02DE80BDD4CCDA034A81C6 /* AuthenticationView.swift in Sources */,
 				BD99C789CF90EB76CEC9B937 /* BlossomError.swift in Sources */,
 				7214A9EA11B340A673BD7D12 /* BlossomSettingsView.swift in Sources */,
+				CD3F864D202A927A027C607C /* CacheDebugView.swift in Sources */,
 				B36F867C9D97F37DD5ABF064 /* ContentView.swift in Sources */,
 				43C7B50D99B5C868319AB4EE /* DebugMenuView.swift in Sources */,
 				D752BE8B8908AD9F5650987B /* FootprintShape.swift in Sources */,
 				95AAB8407E4E2E0AB59F49C4 /* HomeFeedView.swift in Sources */,
+				FA953E254507A7F9060B53C6 /* NDKDebugLogsView.swift in Sources */,
 				B024E150B5E74841EB77B52A /* OutboxDebugModels.swift in Sources */,
 				022334D1E6E5EF6B134DE81F /* OutboxDebugView.swift in Sources */,
 				A206920B9D5137462F6FCDAA /* OutboxDebugViewModel.swift in Sources */,
@@ -268,6 +291,7 @@
 				FC5C22336E6D1B01543000F1 /* RelayManagementView.swift in Sources */,
 				6DB3398FF0FD28F11BA31BBC /* RelaySelectorView.swift in Sources */,
 				5FD6DCA195E74B81683F34A4 /* SettingsView.swift in Sources */,
+				4076DCC890112A6240ACC70F /* URLSessionConfiguration+UserAgent.swift in Sources */,
 				C74ABEA5FB557BB9F6D2ED22 /* UserProfileView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,9 +493,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */ = {
+		6691A0EE8D74A820F84BDB02 /* XCRemoteSwiftPackageReference "NDKSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pablof7z/NDKSwift";
+			repositoryURL = "https://github.com/pablof7z/NDKSwift.git";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -482,12 +506,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		BF65A70242AE2F78A7054E0F /* NDKSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */;
+			package = 6691A0EE8D74A820F84BDB02 /* XCRemoteSwiftPackageReference "NDKSwift" */;
 			productName = NDKSwiftUI;
 		};
 		EED89BD365615F8998AA3242 /* NDKSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2EB8A12618FFF4BEE3CF0844 /* XCRemoteSwiftPackageReference "NDKSwift" */;
+			package = 6691A0EE8D74A820F84BDB02 /* XCRemoteSwiftPackageReference "NDKSwift" */;
 			productName = NDKSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

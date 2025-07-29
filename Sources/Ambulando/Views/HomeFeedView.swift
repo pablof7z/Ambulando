@@ -590,7 +590,7 @@ struct HeaderView: View {
                 // Relay icon if available
                 if let icon = selectedRelayInfo?.icon,
                    let iconURL = URL(string: icon) {
-                    AmbulandoAsyncImage(url: iconURL) { image in
+                    CachedAsyncImage(url: iconURL) { image in
                         image
                             .resizable()
                             .scaledToFill()
@@ -655,7 +655,7 @@ struct HeaderView: View {
         } else if let name = selectedRelayInfo?.name, !name.isEmpty {
             return name.uppercased()
         } else if let relay = selectedRelay {
-            return formatRelayForDisplay(relay).uppercased()
+            return relay.truncatedRelayURL(maxLength: 20).uppercased()
         } else {
             return "AMBULANDO"
         }
@@ -678,22 +678,6 @@ struct HeaderView: View {
         }
     }
     
-    private func formatRelayForDisplay(_ url: String) -> String {
-        var formatted = url
-        if formatted.hasPrefix("wss://") {
-            formatted = String(formatted.dropFirst(6))
-        } else if formatted.hasPrefix("ws://") {
-            formatted = String(formatted.dropFirst(5))
-        }
-        if formatted.hasSuffix("/") {
-            formatted = String(formatted.dropLast())
-        }
-        // Truncate long URLs
-        if formatted.count > 20 {
-            return String(formatted.prefix(17)) + "..."
-        }
-        return formatted
-    }
 }
 
 // MARK: - Empty Feed View

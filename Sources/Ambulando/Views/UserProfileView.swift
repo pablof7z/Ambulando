@@ -20,7 +20,7 @@ struct UserProfileView: View {
             VStack(spacing: 24) {
                 // Header with profile picture and stats
                 VStack(spacing: 16) {
-                    NDKProfilePicture(pubkey: pubkey, size: 120)
+                    NDKUIProfilePicture(pubkey: pubkey, size: 120)
                     
                     VStack(spacing: 8) {
                         Text(profile?.displayName ?? profile?.name ?? String(pubkey.prefix(16)))

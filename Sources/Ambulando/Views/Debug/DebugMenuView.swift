@@ -25,7 +25,7 @@ struct DebugMenuView: View {
                     )
                 }
                 
-                NavigationLink(destination: CacheDebugView()) {
+                NavigationLink(destination: CacheDebugView().environmentObject(nostrManager)) {
                     DebugMenuRow(
                         title: "Cache Inspector",
                         subtitle: "View cached events and profiles",
@@ -40,6 +40,15 @@ struct DebugMenuView: View {
                         subtitle: "View raw event data and signatures",
                         icon: "doc.text.magnifyingglass",
                         iconColor: .orange
+                    )
+                }
+                
+                NavigationLink(destination: ActiveSubscriptionsView()) {
+                    DebugMenuRow(
+                        title: "Active Subscriptions",
+                        subtitle: "Monitor active subscriptions on each relay",
+                        icon: "dot.radiowaves.left.and.right",
+                        iconColor: .cyan
                     )
                 }
             }
@@ -197,38 +206,6 @@ struct RelayDebugView: View {
     }
 }
 
-struct CacheDebugView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "externaldrive.fill")
-                .font(.system(size: 64))
-                .foregroundColor(.green.opacity(0.6))
-            
-            Text("Cache Inspector")
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding(.top)
-            
-            Text("Coming soon...")
-                .foregroundColor(.white.opacity(0.6))
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.05, green: 0.02, blue: 0.08),
-                    Color(red: 0.02, green: 0.01, blue: 0.03),
-                    Color.black
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-        )
-        .navigationTitle("Cache Inspector")
-        .preferredColorScheme(.dark)
-    }
-}
 
 struct EventDebugView: View {
     var body: some View {

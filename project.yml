@@ -9,7 +9,7 @@ options:
   
 packages:
   NDKSwift:
-    url: https://github.com/pablof7z/NDKSwift
+    url: https://github.com/pablof7z/NDKSwift.git
     branch: master
 
 targets:
