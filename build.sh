@@ -12,7 +12,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 # Get app name from directory
-APP_NAME=$(basename "$SCRIPT_DIR")
+APP_NAME=Ambulando
 
 echo -e "${YELLOW}🔄 Regenerating Xcode project...${NC}"
 
