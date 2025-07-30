@@ -54,25 +54,41 @@ struct OutboxDebugView: View {
     }
     
     private var contentView: some View {
-        VStack(spacing: 0) {
-            // Summary Card
-            OutboxSummaryCard(summary: viewModel.summary)
-                .padding(.horizontal)
-                .padding(.top)
-            
-            // Search Bar
-            searchBar
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-            
-            // User List
-            List(filteredEntries) { entry in
-                OutboxEntryRow(entry: entry) {
-                    selectedEntry = entry
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                // Summary Card
+                OutboxSummaryCard(summary: viewModel.summary)
+                    .padding(.horizontal)
+                    .padding(.top)
+                
+                // Connected Relays Section
+                if !viewModel.summary.connectedRelaysInfo.isEmpty {
+                    ConnectedRelaysSection(relays: viewModel.summary.connectedRelaysInfo)
+                        .padding(.horizontal)
+                        .padding(.top, 8)
                 }
-                .listRowBackground(Color.white.opacity(0.05))
+                
+                // Search Bar
+                searchBar
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                
+                // User List
+                LazyVStack(spacing: 0) {
+                    ForEach(filteredEntries) { entry in
+                        OutboxEntryRow(entry: entry) {
+                            selectedEntry = entry
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                        .padding(.vertical, 2)
+                    }
+                }
+                .padding(.bottom, 20) // Add bottom padding for better scrolling
             }
-            .scrollContentBackground(.hidden)
         }
     }
     
@@ -213,6 +229,129 @@ struct RelayCountBadge: View {
                 .stroke(color.opacity(0.6), lineWidth: 1)
         )
         .cornerRadius(4)
+    }
+}
+
+struct ConnectedRelaysSection: View {
+    let relays: [ConnectedRelayInfo]
+    @State private var isExpanded = false
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // Section Header
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isExpanded.toggle()
+                }
+            }) {
+                HStack {
+                    Image(systemName: "antenna.radiowaves.left.and.right")
+                        .font(.title3)
+                        .foregroundColor(.purple)
+                    
+                    Text("Connected Relays")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    Text("(\(relays.count))")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                    
+                    Spacer()
+                    
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            // Expanded Content
+            if isExpanded {
+                LazyVStack(spacing: 8) {
+                    ForEach(relays) { relay in
+                        ConnectedRelayRow(relay: relay)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .frame(maxHeight: 300) // Limit height to prevent overflow
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+}
+
+struct ConnectedRelayRow: View {
+    let relay: ConnectedRelayInfo
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Connection Status
+            Circle()
+                .fill(relay.isConnected ? Color.green : Color.red)
+                .frame(width: 8, height: 8)
+            
+            // Relay URL
+            VStack(alignment: .leading, spacing: 2) {
+                Text(relay.url)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                HStack(spacing: 8) {
+                    // Connection Reason Badge
+                    Text(relay.connectionReason.description)
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(Color(relay.connectionReason.color).opacity(0.3))
+                                .overlay(
+                                    Capsule()
+                                        .stroke(Color(relay.connectionReason.color).opacity(0.6), lineWidth: 1)
+                                )
+                        )
+                    
+                    // Associated Pubkey for Outbox relays
+                    if let pubkey = relay.associatedPubkey {
+                        Text("via: \(String(pubkey.prefix(8)))...")
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            // Connection State
+            Text(relay.connectionState)
+                .font(.caption2)
+                .foregroundColor(.white.opacity(0.7))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule()
+                        .fill(Color.white.opacity(0.1))
+                )
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white.opacity(0.05))
+        )
     }
 }
 

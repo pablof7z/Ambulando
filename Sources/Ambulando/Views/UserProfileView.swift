@@ -20,7 +20,7 @@ struct UserProfileView: View {
             VStack(spacing: 24) {
                 // Header with profile picture and stats
                 VStack(spacing: 16) {
-                    NDKUIProfilePicture(pubkey: pubkey, size: 120)
+                    NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey, size: 120)
                     
                     VStack(spacing: 8) {
                         Text(profile?.displayName ?? profile?.name ?? String(pubkey.prefix(16)))
@@ -62,7 +62,8 @@ struct UserProfileView: View {
                     .padding(.top, 8)
                     
                     // Follow button
-                    if pubkey != appState.currentUser?.pubkey {
+                    if let currentUserPubkey = nostrManager.authManager?.activeSession?.pubkey, 
+                       pubkey != currentUserPubkey {
                         Button(action: toggleFollow) {
                             Text(isFollowing ? "Following" : "Follow")
                                 .font(.system(size: 16, weight: .semibold))
@@ -156,7 +157,8 @@ struct UserProfileView: View {
     
     private func loadProfile() {
         Task {
-            guard let ndk = nostrManager.ndk else { return }
+            guard nostrManager.isInitialized else { return }
+            let ndk = nostrManager.ndk
             
             for await profile in await ndk.profileManager.observe(for: pubkey, maxAge: TimeConstants.hour) {
                 await MainActor.run {
@@ -168,8 +170,9 @@ struct UserProfileView: View {
     }
     
     private func checkFollowStatus() {
-        guard let ndk = nostrManager.ndk,
-              let sessionData = ndk.sessionData else { return }
+        guard nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
+        guard let sessionData = ndk.sessionData else { return }
         
         isFollowing = sessionData.followList.contains(pubkey)
     }
@@ -180,7 +183,8 @@ struct UserProfileView: View {
     }
     
     private func loadAudioEvents() {
-        guard let ndk = nostrManager.ndk else { return }
+        guard nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
         
         // Cancel any existing task
         audioEventsTask?.cancel()

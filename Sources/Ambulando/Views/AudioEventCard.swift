@@ -8,8 +8,6 @@ struct AudioEventCard: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var nostrManager: NostrManager
     
-    @State private var author: NDKUserProfile?
-    @State private var replyToProfile: NDKUserProfile?
     @State private var isPlaying = false
     @State private var playbackProgress: Double = 0
     @State private var duration: TimeInterval = 0
@@ -25,6 +23,7 @@ struct AudioEventCard: View {
     @State private var cardScale: CGFloat = 1
     @State private var showingUserProfile = false
     
+    
     var isCurrentlyPlaying: Bool {
         appState.currentlyPlayingId == audioEvent.id && isPlaying
     }
@@ -32,7 +31,7 @@ struct AudioEventCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 13) {
             // Author avatar using NDKSwiftUI component
-            NDKUIProfilePicture(pubkey: audioEvent.author.pubkey, size: 44)
+            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: audioEvent.author.pubkey, size: 44)
                 .onTapGesture {
                     showingUserProfile = true
                 }
@@ -40,7 +39,7 @@ struct AudioEventCard: View {
             VStack(alignment: .leading, spacing: 5) {
                 // Author info
                 HStack(spacing: 4) {
-                    Text(author?.displayName ?? author?.name ?? String(audioEvent.author.pubkey.prefix(8)))
+                    NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: audioEvent.author.pubkey)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -71,14 +70,14 @@ struct AudioEventCard: View {
                         Image(systemName: "arrowshape.turn.up.left.fill")
                             .font(.system(size: 10))
                         
-                        if let replyToProfile = replyToProfile {
-                            Text("Replying to \(replyToProfile.displayName ?? replyToProfile.name ?? String(audioEvent.replyToPubkey?.prefix(8) ?? ""))")
-                                .font(.system(size: 12))
-                        } else if let replyToPubkey = audioEvent.replyToPubkey {
-                            Text("Replying to \(String(replyToPubkey.prefix(8)))...")
+                        Text("Replying to ")
+                            .font(.system(size: 12))
+                        
+                        if let replyToPubkey = audioEvent.replyToPubkey {
+                            NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: replyToPubkey)
                                 .font(.system(size: 12))
                         } else {
-                            Text("Reply")
+                            Text("someone")
                                 .font(.system(size: 12))
                         }
                     }
@@ -150,10 +149,6 @@ struct AudioEventCard: View {
             isCurrentlyPlaying ? Color.white.opacity(0.03) : Color.clear
         )
         .onAppear {
-            loadAuthorProfile()
-            if audioEvent.isReply && audioEvent.replyToPubkey != nil {
-                loadReplyToProfile()
-            }
             setupAudioPlayer()
             loadReactions()
         }
@@ -177,33 +172,6 @@ struct AudioEventCard: View {
                     reactions: reactionsByEmoji[emoji] ?? [],
                     nostrManager: nostrManager
                 )
-            }
-        }
-    }
-    
-    private func loadAuthorProfile() {
-        Task {
-            guard let ndk = nostrManager.ndk else { return }
-            
-            for await profile in await ndk.profileManager.observe(for: audioEvent.author.pubkey, maxAge: TimeConstants.hour) {
-                await MainActor.run {
-                    self.author = profile
-                }
-                break // Just get the first result
-            }
-        }
-    }
-    
-    private func loadReplyToProfile() {
-        Task {
-            guard let ndk = nostrManager.ndk,
-                  let replyToPubkey = audioEvent.replyToPubkey else { return }
-            
-            for await profile in await ndk.profileManager.observe(for: replyToPubkey, maxAge: TimeConstants.hour) {
-                await MainActor.run {
-                    self.replyToProfile = profile
-                }
-                break // Just get the first result
             }
         }
     }
@@ -351,7 +319,7 @@ struct AudioEventCard: View {
     
     private func loadReactions() {
         Task {
-            guard let ndk = nostrManager.ndk else { return }
+            let ndk = nostrManager.ndk
             
             // Load reactions specifically for this event using #e tag
             let filter = NDKFilter(
@@ -376,7 +344,7 @@ struct AudioEventCard: View {
                             reactionsByEmoji[emoji]!.append(event)
                             
                             // Check if current user has reacted with this emoji
-                            if let currentUserPubkey = appState.currentUser?.pubkey,
+                            if let currentUserPubkey = nostrManager.authManager?.activeSession?.pubkey,
                                event.pubkey == currentUserPubkey {
                                 userReactions.insert(emoji)
                             }
@@ -410,7 +378,7 @@ struct AudioEventCard: View {
     }
     
     private func handleReaction(_ emoji: String) {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         Task {
             if userReactions.contains(emoji) {
@@ -662,7 +630,6 @@ struct ReactionsDrawer: View {
     let nostrManager: NostrManager
     @Environment(\.dismiss) private var dismiss
     
-    @State private var profiles: [String: NDKUserProfile] = [:]
     
     var body: some View {
         NavigationView {
@@ -689,9 +656,6 @@ struct ReactionsDrawer: View {
                     .foregroundColor(.white)
                 }
             }
-        }
-        .onAppear {
-            loadProfiles()
         }
     }
     
@@ -721,7 +685,7 @@ struct ReactionsDrawer: View {
     
     private func reactionRow(for reaction: NDKEvent) -> some View {
         HStack(spacing: 12) {
-            NDKUIProfilePicture(pubkey: reaction.pubkey, size: 40)
+            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: reaction.pubkey, size: 40)
             
             profileInfo(for: reaction.pubkey)
             
@@ -737,40 +701,18 @@ struct ReactionsDrawer: View {
     
     private func profileInfo(for pubkey: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            if let profile = profiles[pubkey] {
-                Text(profile.displayName ?? profile.name ?? String(pubkey.prefix(8)))
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                
-                if let name = profile.name, profile.displayName != nil {
-                    Text("@\(name)")
-                        .font(.system(size: 13))
-                        .foregroundColor(.white.opacity(0.5))
-                        .lineLimit(1)
-                }
-            } else {
-                Text(String(pubkey.prefix(8)) + "...")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
-            }
+            NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.white)
+                .lineLimit(1)
+            
+            NDKUIUsername(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey)
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.5))
+                .lineLimit(1)
         }
     }
     
-    private func loadProfiles() {
-        Task {
-            guard let ndk = nostrManager.ndk else { return }
-            
-            for reaction in reactions {
-                for await profile in await ndk.profileManager.observe(for: reaction.pubkey, maxAge: TimeConstants.hour) {
-                    await MainActor.run {
-                        profiles[reaction.pubkey] = profile
-                    }
-                    break
-                }
-            }
-        }
-    }
     
     private func relativeTime(from date: Date) -> String {
         let interval = Date().timeIntervalSince(date)

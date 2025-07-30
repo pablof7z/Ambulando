@@ -9,8 +9,7 @@ options:
   
 packages:
   NDKSwift:
-    url: https://github.com/pablof7z/NDKSwift.git
-    branch: master
+    path: ../NDKSwift
 
 targets:
   Ambulando:
@@ -56,3 +55,4 @@ targets:
           - UIInterfaceOrientationPortrait
         UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
+        NSMicrophoneUsageDescription: "Ambulando needs microphone access to record and share voice notes with your network"

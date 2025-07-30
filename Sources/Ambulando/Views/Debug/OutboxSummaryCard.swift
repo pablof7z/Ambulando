@@ -143,7 +143,8 @@ struct OutboxSummaryCard_Previews: PreviewProvider {
                 averageRelaysPerUser: 2.5,
                 lastUpdateTime: Date().addingTimeInterval(-300),
                 unknownUsersCount: 7,
-                activeSubscriptions: 3
+                activeSubscriptions: 3,
+                connectedRelaysInfo: []
             )
         )
         .padding()

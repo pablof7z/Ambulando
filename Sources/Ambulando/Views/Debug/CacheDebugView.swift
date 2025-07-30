@@ -178,7 +178,7 @@ struct CacheDebugView: View {
     }
     
     private func loadCacheStatistics() async {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         isLoadingStats = true
         errorMessage = nil
@@ -206,7 +206,7 @@ struct CacheDebugView: View {
     }
     
     private func loadEventsForKind(_ kind: Int) async {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         await MainActor.run {
             isLoadingEvents = true
@@ -560,7 +560,7 @@ struct ProfileCacheView: View {
     }
     
     private func loadCachedProfiles() async {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         isLoading = true
         

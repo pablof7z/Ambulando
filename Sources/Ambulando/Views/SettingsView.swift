@@ -102,13 +102,14 @@ struct SettingsView: View {
     }
     
     private func loadUserData() async {
-        guard let ndk = nostrManager.ndk else { return }
+        guard nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
         
         // Get the current user from the active session
-        if let activeSession = nostrManager.authManager.activeSession {
+        if let authManager = nostrManager.authManager,
+           let activeSession = authManager.activeSession {
             let pubkey = activeSession.pubkey
             currentUser = NDKUser(pubkey: pubkey)
-            appState.currentUser = currentUser
             
             // Fetch profile using NDKProfileManager
             for await profile in await ndk.profileManager.observe(for: pubkey, maxAge: TimeConstants.hour) {
@@ -137,9 +138,13 @@ struct SettingsView: View {
     }
     
     private func logout() {
-        nostrManager.logout()
-        appState.reset()
-        dismiss()
+        Task {
+            await nostrManager.logout()
+            await MainActor.run {
+                appState.reset()
+                dismiss()
+            }
+        }
     }
 }
 
@@ -188,8 +193,10 @@ struct MuteListView: View {
     }
     
     private func loadMutedUsers() async {
-        guard let ndk = nostrManager.ndk,
-              let sessionData = ndk.sessionData else { return }
+        guard nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
+        
+        guard let sessionData = ndk.sessionData else { return }
         
         mutedUsers = sessionData.muteList
     }

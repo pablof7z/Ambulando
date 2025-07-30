@@ -147,7 +147,7 @@ struct HomeFeedView: View {
     }
     
     private func startStreamingAudioEvents() {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         // Cancel any existing task
         dataSourceTask?.cancel()
@@ -211,8 +211,6 @@ struct HomeFeedView: View {
     }
     
     private func refreshAudioEvents() async {
-        guard nostrManager.ndk != nil else { return }
-        
         // Clear existing events for a fresh feed
         await MainActor.run {
             audioEvents.removeAll()
@@ -346,8 +344,9 @@ struct HomeFeedView: View {
     
     private func completeRecording() {
         guard let recorder = audioRecorder,
-              let ndk = nostrManager.ndk,
-              let signer = ndk.signer else { return }
+              nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
+        guard let signer = ndk.signer else { return }
         
         // Stop the timer and recording first
         recordingTimer?.invalidate()
@@ -508,7 +507,8 @@ struct HomeFeedView: View {
     private func publishRecording() {
         guard let recorder = audioRecorder,
               let uploadedURL = uploadedURL,
-              let ndk = nostrManager.ndk else { return }
+              nostrManager.isInitialized else { return }
+        let ndk = nostrManager.ndk
         
         let finalDuration = recordingDuration
         
@@ -663,10 +663,11 @@ struct HeaderView: View {
     
     private func loadRelayInfo() async {
         guard let selectedRelay = selectedRelay,
-              let ndk = nostrManager.ndk else {
+              nostrManager.isInitialized else {
             selectedRelayInfo = nil
             return
         }
+        let ndk = nostrManager.ndk
         
         // Find the relay in the pool
         let relays = await ndk.relays
@@ -845,10 +846,10 @@ struct RecordingOverlay: View {
                             .foregroundColor(Color.white.opacity(0.6))
                         
                         HStack {
-                            NDKUIProfilePicture(pubkey: replyingTo.author.pubkey, size: 32)
+                            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: replyingTo.author.pubkey, size: 32)
                             
                             VStack(alignment: .leading) {
-                                Text(String(replyingTo.author.pubkey.prefix(8)))
+                                NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: replyingTo.author.pubkey)
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(.white)
                                 

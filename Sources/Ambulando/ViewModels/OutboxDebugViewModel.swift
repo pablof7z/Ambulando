@@ -33,7 +33,7 @@ class OutboxDebugViewModel: ObservableObject {
             // Show cached data immediately
             let entries = await processOutboxItems(cachedItems)
             self.outboxEntries = entries
-            self.summary = calculateSummary(from: entries, stats: RelayUpdateStats(activeSubscriptions: 0, totalUnknownAuthors: 0, totalUpdateSubscriptions: 0))
+            self.summary = await calculateSummary(from: entries, stats: RelayUpdateStats(activeSubscriptions: 0, totalUnknownAuthors: 0, totalUpdateSubscriptions: 0))
             isLoading = false
         }
         
@@ -46,7 +46,7 @@ class OutboxDebugViewModel: ObservableObject {
         let stats = await ndk.outbox.getRelayUpdateStats()
         
         // Update summary with fresh stats
-        self.summary = calculateSummary(from: outboxEntries, stats: stats)
+        self.summary = await calculateSummary(from: outboxEntries, stats: stats)
         
         // Mark as loaded if it wasn't already
         if isLoading {
@@ -93,7 +93,7 @@ class OutboxDebugViewModel: ObservableObject {
         }
     }
     
-    private func calculateSummary(from entries: [OutboxEntry], stats: RelayUpdateStats) -> OutboxSummary {
+    private func calculateSummary(from entries: [OutboxEntry], stats: RelayUpdateStats) async -> OutboxSummary {
         let allRelays = Set(entries.flatMap { entry in
             entry.readRelays.map { $0.url } + entry.writeRelays.map { $0.url }
         })
@@ -101,14 +101,52 @@ class OutboxDebugViewModel: ObservableObject {
         let totalRelayCount = entries.reduce(0) { $0 + $1.totalRelayCount }
         let averageRelays = entries.isEmpty ? 0 : Double(totalRelayCount) / Double(entries.count)
         
+        // Get connected relay information
+        let connectedRelaysInfo = await getConnectedRelaysInfo()
+        
         return OutboxSummary(
             totalUsers: entries.count,
             totalRelays: allRelays.count,
             averageRelaysPerUser: averageRelays,
             lastUpdateTime: entries.first?.lastUpdated ?? Date(),
             unknownUsersCount: stats.totalUnknownAuthors,
-            activeSubscriptions: stats.activeSubscriptions
+            activeSubscriptions: stats.activeSubscriptions,
+            connectedRelaysInfo: connectedRelaysInfo
         )
+    }
+    
+    private func getConnectedRelaysInfo() async -> [ConnectedRelayInfo] {
+        guard let ndk = ndk else { return [] }
+        
+        var connectedRelaysInfo: [ConnectedRelayInfo] = []
+        
+        // Get all relays from NDK's public relays property
+        let relays = await ndk.relays
+        for relay in relays {
+            let origin = await relay.origin
+            let connectionState = await relay.connectionState
+            let isConnected = await relay.isConnected
+            
+            let connectionReason = RelayConnectionReason.from(origin: origin)
+            var associatedPubkey: String?
+            
+            // Extract pubkey for outbox relays
+            if case let .outbox(pubkey) = origin {
+                associatedPubkey = pubkey
+            }
+            
+            let relayInfo = ConnectedRelayInfo(
+                url: relay.url,
+                connectionReason: connectionReason,
+                associatedPubkey: associatedPubkey,
+                isConnected: isConnected,
+                connectionState: String(describing: connectionState)
+            )
+            
+            connectedRelaysInfo.append(relayInfo)
+        }
+        
+        return connectedRelaysInfo
     }
     
     private func startRealtimeUpdates() {
@@ -139,7 +177,7 @@ class OutboxDebugViewModel: ObservableObject {
         // Recalculate summary
         if let ndk = ndk {
             let stats = await ndk.outbox.getRelayUpdateStats()
-            summary = calculateSummary(from: outboxEntries, stats: stats)
+            summary = await calculateSummary(from: outboxEntries, stats: stats)
         }
         
         // Re-sort entries
@@ -225,13 +263,21 @@ extension OutboxDebugViewModel {
         ]
         
         viewModel.outboxEntries = mockEntries
+        let mockConnectedRelays = [
+            ConnectedRelayInfo(url: "wss://relay.damus.io", connectionReason: .explicit, isConnected: true, connectionState: "connected"),
+            ConnectedRelayInfo(url: "wss://nos.lol", connectionReason: .outbox, associatedPubkey: "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2", isConnected: true, connectionState: "connected"),
+            ConnectedRelayInfo(url: "wss://nostr.wine", connectionReason: .outboxConfig, isConnected: false, connectionState: "failed"),
+            ConnectedRelayInfo(url: "wss://relay.nostr.band", connectionReason: .outbox, associatedPubkey: "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d", isConnected: true, connectionState: "authenticated")
+        ]
+        
         viewModel.summary = OutboxSummary(
             totalUsers: mockEntries.count,
             totalRelays: 4,
             averageRelaysPerUser: 2.5,
             lastUpdateTime: Date(),
             unknownUsersCount: 15,
-            activeSubscriptions: 3
+            activeSubscriptions: 3,
+            connectedRelaysInfo: mockConnectedRelays
         )
         viewModel.isLoading = false
         

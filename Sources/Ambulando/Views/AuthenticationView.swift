@@ -453,19 +453,15 @@ struct AuthenticationView: View {
                     let signer = try NDKPrivateKeySigner(nsec: authInput)
                     let sessionData = try await nostrManager.login(with: signer)
                     
-                    await MainActor.run {
-                        appState.isAuthenticated = true
-                        appState.currentUser = nostrManager.ndk?.getUser(sessionData.pubkey)
-                    }
+                    // Authentication is handled by NDKAuthManager
+                    // No need to update appState as we're using authManager directly
                 } else {
                     // Handle NIP-46 login (bunker://, nostrconnect://, or NIP-05)
                     await MainActor.run {
                         isConnectingToBunker = true
                     }
                     
-                    guard let ndk = nostrManager.ndk else {
-                        throw NDKError.notConfigured("NDK not initialized")
-                    }
+                    let ndk = nostrManager.ndk
                     
                     let bunkerSigner: NDKBunkerSigner
                     
@@ -507,8 +503,7 @@ struct AuthenticationView: View {
                     let sessionData = try await nostrManager.login(with: bunkerSigner)
                     
                     await MainActor.run {
-                        appState.isAuthenticated = true
-                        appState.currentUser = nostrManager.ndk?.getUser(sessionData.pubkey)
+                        // Authentication is handled by NDKAuthManager
                         isConnectingToBunker = false
                     }
                 }

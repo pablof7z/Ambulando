@@ -6,14 +6,16 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     
     var body: some View {
-        let authManager = NDKAuthManager.shared
-        let isAuth = authManager.hasActiveSession && authManager.activeSession != nil && authManager.activeSigner != nil
-        
         ZStack {
             Color.black.ignoresSafeArea()
             
             Group {
-                if isAuth {
+                if !nostrManager.isInitialized {
+                    // Show loading while NostrManager initializes
+                    ProgressView("Initializing...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .foregroundColor(.orange)
+                } else if nostrManager.isAuthenticated {
                     NavigationView {
                         HomeFeedView()
                     }
@@ -37,26 +39,7 @@ struct ContentView: View {
         )
         .onAppear {
             appState.setNostrManager(nostrManager)
-            checkAuthentication()
         }
         .environment(\.ndk, nostrManager.ndk)
-        .onChange(of: authManager.hasActiveSession) { _, hasActiveSession in
-            if hasActiveSession {
-                // Blossom server manager loads automatically when accessed
-                // through nostrManager.ndk.blossomServerManager
-            }
-        }
-    }
-    
-    private func checkAuthentication() {
-        let authManager = NDKAuthManager.shared
-        guard let session = authManager.activeSession else {
-            appState.isAuthenticated = false
-            appState.currentUser = nil
-            return
-        }
-        
-        appState.isAuthenticated = true
-        appState.currentUser = nostrManager.ndk?.getUser(session.pubkey)
     }
 }

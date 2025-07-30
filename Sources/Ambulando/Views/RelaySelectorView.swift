@@ -95,7 +95,7 @@ struct RelaySelectorView: View {
     
     
     private func startObservingRelays() {
-        guard let ndk = nostrManager.ndk else { return }
+        let ndk = nostrManager.ndk
         
         observerTask = Task {
             // Get initial relay states

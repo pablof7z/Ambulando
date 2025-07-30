@@ -355,10 +355,7 @@ struct ActiveSubscriptionsView: View {
     private func loadSubscriptions() async {
         isLoading = true
         
-        guard let ndk = nostrManager.ndk else {
-            isLoading = false
-            return
-        }
+        let ndk = nostrManager.ndk
         
         let relays = await ndk.relays
         var newSubscriptions: [RelaySubscriptions] = []
