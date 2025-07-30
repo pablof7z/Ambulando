@@ -40,18 +40,6 @@ struct SettingsView: View {
             }
             .listRowBackground(Color.white.opacity(0.05))
             
-            // App Info
-            Section(header: Text("App").foregroundColor(Color.white.opacity(0.8))) {
-                LabeledContent("Version", value: "1.0.0")
-                    .foregroundColor(.white)
-                
-                Link(destination: URL(string: "https://github.com/nostr-dev-kit/ndk-swift")!) {
-                    Label("Source Code", systemImage: "chevron.left.forwardslash.chevron.right")
-                }
-                .foregroundColor(.white)
-            }
-            .listRowBackground(Color.white.opacity(0.05))
-            
             // Debug section (only in debug builds)
             #if DEBUG
             Section(header: Text("Debug").foregroundColor(Color.white.opacity(0.8))) {
