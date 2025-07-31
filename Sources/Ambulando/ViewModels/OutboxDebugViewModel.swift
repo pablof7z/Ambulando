@@ -77,7 +77,7 @@ class OutboxDebugViewModel: ObservableObject {
         // Stream profile updates for all tracked users
         for entry in outboxEntries {
             Task {
-                for await profile in await ndk.profileManager.observe(for: entry.pubkey, maxAge: TimeConstants.hour) {
+                for await profile in await ndk.profileManager.subscribe(for: entry.pubkey, maxAge: TimeConstants.hour) {
                     if let profile = profile,
                        let displayName = profile.name ?? profile.displayName {
                         // Update the entry with the display name

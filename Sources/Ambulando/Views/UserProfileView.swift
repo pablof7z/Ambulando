@@ -8,7 +8,7 @@ struct UserProfileView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
     
-    @State private var profile: NDKUserProfile?
+    @State private var metadata: NDKUserMetadata?
     @State private var isFollowing = false
     @State private var followersCount = 0
     @State private var followingCount = 0
@@ -20,14 +20,14 @@ struct UserProfileView: View {
             VStack(spacing: 24) {
                 // Header with profile picture and stats
                 VStack(spacing: 16) {
-                    NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey, size: 120)
+                    NDKUIProfilePicture(ndk: nostrManager.ndk, pubkey: pubkey, size: 120)
                     
                     VStack(spacing: 8) {
-                        Text(profile?.displayName ?? profile?.name ?? String(pubkey.prefix(16)))
+                        Text(metadata?.displayName ?? metadata?.name ?? String(pubkey.prefix(16)))
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.white)
                         
-                        if let nip05 = profile?.nip05 {
+                        if let nip05 = metadata?.nip05 {
                             HStack(spacing: 4) {
                                 Image(systemName: "checkmark.seal.fill")
                                     .font(.system(size: 14))
@@ -84,7 +84,7 @@ struct UserProfileView: View {
                 .padding(.top, 20)
                 
                 // About section
-                if let about = profile?.about, !about.isEmpty {
+                if let about = metadata?.about, !about.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("About")
                             .font(.system(size: 18, weight: .semibold))
@@ -160,9 +160,9 @@ struct UserProfileView: View {
             guard nostrManager.isInitialized else { return }
             let ndk = nostrManager.ndk
             
-            for await profile in await ndk.profileManager.observe(for: pubkey, maxAge: TimeConstants.hour) {
+            for await metadata in await ndk.profileManager.subscribe(for: pubkey, maxAge: TimeConstants.hour) {
                 await MainActor.run {
-                    self.profile = profile
+                    self.metadata = metadata
                 }
                 break // Just get the first result for now
             }
@@ -199,7 +199,7 @@ struct UserProfileView: View {
         )
         
         // Stream audio events
-        let dataSource = ndk.observe(filter: filter, maxAge: 0, cachePolicy: .cacheWithNetwork)
+        let dataSource = ndk.subscribe(filter: filter, maxAge: 0, cachePolicy: .cacheWithNetwork)
         
         audioEventsTask = Task {
             for await event in dataSource.events {

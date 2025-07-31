@@ -31,7 +31,7 @@ struct AudioEventCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 13) {
             // Author avatar using NDKSwiftUI component
-            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: audioEvent.author.pubkey, size: 44)
+            NDKUIProfilePicture(ndk: nostrManager.ndk, pubkey: audioEvent.author.pubkey, size: 44)
                 .onTapGesture {
                     showingUserProfile = true
                 }
@@ -39,7 +39,7 @@ struct AudioEventCard: View {
             VStack(alignment: .leading, spacing: 5) {
                 // Author info
                 HStack(spacing: 4) {
-                    NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: audioEvent.author.pubkey)
+                    NDKUIDisplayName(ndk: nostrManager.ndk, pubkey: audioEvent.author.pubkey)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -74,7 +74,7 @@ struct AudioEventCard: View {
                             .font(.system(size: 12))
                         
                         if let replyToPubkey = audioEvent.replyToPubkey {
-                            NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: replyToPubkey)
+                            NDKUIDisplayName(ndk: nostrManager.ndk, pubkey: replyToPubkey)
                                 .font(.system(size: 12))
                         } else {
                             Text("someone")
@@ -327,7 +327,7 @@ struct AudioEventCard: View {
                 tags: ["e": [audioEvent.id]]
             )
             
-            let dataSource = ndk.observe(filter: filter, maxAge: 0)
+            let dataSource = ndk.subscribe(filter: filter, maxAge: 0)
             
             for await event in dataSource.events {
                 // Process all emoji reactions
@@ -685,7 +685,7 @@ struct ReactionsDrawer: View {
     
     private func reactionRow(for reaction: NDKEvent) -> some View {
         HStack(spacing: 12) {
-            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: reaction.pubkey, size: 40)
+            NDKUIProfilePicture(ndk: nostrManager.ndk, pubkey: reaction.pubkey, size: 40)
             
             profileInfo(for: reaction.pubkey)
             
@@ -701,12 +701,12 @@ struct ReactionsDrawer: View {
     
     private func profileInfo(for pubkey: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey)
+            NDKUIDisplayName(ndk: nostrManager.ndk, pubkey: pubkey)
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.white)
                 .lineLimit(1)
             
-            NDKUIUsername(profileManager: nostrManager.ndk.profileManager, pubkey: pubkey)
+            NDKUIUsername(ndk: nostrManager.ndk, pubkey: pubkey)
                 .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.5))
                 .lineLimit(1)

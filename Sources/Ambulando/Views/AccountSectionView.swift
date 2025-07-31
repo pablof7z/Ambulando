@@ -3,7 +3,7 @@ import NDKSwift
 
 struct AccountSectionView: View {
     let currentUser: NDKUser?
-    let userProfile: NDKUserProfile?
+    let userMetadata: NDKUserMetadata?
     let copiedNpub: Bool
     let onCopyNpub: (String) -> Void
     
@@ -24,14 +24,14 @@ struct AccountSectionView: View {
                             )
                         )
                         .overlay(
-                            Text((userProfile?.displayName ?? userProfile?.name ?? "User").prefix(1).uppercased())
+                            Text((userMetadata?.displayName ?? userMetadata?.name ?? "User").prefix(1).uppercased())
                                 .font(.headline)
                                 .foregroundColor(.white)
                         )
                         .frame(width: 50, height: 50)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(userProfile?.displayName ?? userProfile?.name ?? "Nostr User")
+                        Text(userMetadata?.displayName ?? userMetadata?.name ?? "Nostr User")
                             .font(.headline)
                             .foregroundColor(.white)
                         

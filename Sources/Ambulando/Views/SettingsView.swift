@@ -7,7 +7,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentUser: NDKUser?
-    @State private var userProfile: NDKUserProfile?
+    @State private var userMetadata: NDKUserMetadata?
     @State private var copiedNpub = false
     
     var body: some View {
@@ -15,7 +15,7 @@ struct SettingsView: View {
             // Account section
             AccountSectionView(
                 currentUser: currentUser,
-                userProfile: userProfile,
+                userMetadata: userMetadata,
                 copiedNpub: copiedNpub,
                 onCopyNpub: copyNpub
             )
@@ -100,9 +100,9 @@ struct SettingsView: View {
             currentUser = NDKUser(pubkey: pubkey)
             
             // Fetch profile using NDKProfileManager
-            for await profile in await ndk.profileManager.observe(for: pubkey, maxAge: TimeConstants.hour) {
-                userProfile = profile
-                break // Take first profile
+            for await metadata in await ndk.profileManager.subscribe(for: pubkey, maxAge: TimeConstants.hour) {
+                userMetadata = metadata
+                break // Take first metadata
             }
         }
     }

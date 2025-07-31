@@ -469,19 +469,19 @@ struct DetailRow: View {
 // MARK: - Profile Cache View
 struct ProfileCacheView: View {
     @EnvironmentObject var nostrManager: NostrManager
-    @State private var cachedProfiles: [(pubkey: String, profile: NDKUserProfile)] = []
+    @State private var cachedProfiles: [(pubkey: String, metadata: NDKUserMetadata)] = []
     @State private var isLoading = false
     @State private var searchQuery = ""
     @Environment(\.dismiss) var dismiss
     
-    private var filteredProfiles: [(pubkey: String, profile: NDKUserProfile)] {
+    private var filteredProfiles: [(pubkey: String, metadata: NDKUserMetadata)] {
         if searchQuery.isEmpty {
             return cachedProfiles
         }
         
         return cachedProfiles.filter { item in
-            item.profile.name?.localizedCaseInsensitiveContains(searchQuery) ?? false ||
-            item.profile.displayName?.localizedCaseInsensitiveContains(searchQuery) ?? false ||
+            item.metadata.name?.localizedCaseInsensitiveContains(searchQuery) ?? false ||
+            item.metadata.displayName?.localizedCaseInsensitiveContains(searchQuery) ?? false ||
             item.pubkey.localizedCaseInsensitiveContains(searchQuery)
         }
     }
@@ -534,7 +534,7 @@ struct ProfileCacheView: View {
                         ScrollView {
                             LazyVStack(spacing: 8) {
                                 ForEach(filteredProfiles, id: \.pubkey) { item in
-                                    ProfileCacheRow(pubkey: item.pubkey, profile: item.profile)
+                                    ProfileCacheRow(pubkey: item.pubkey, metadata: item.metadata)
                                 }
                             }
                             .padding(.horizontal)
@@ -570,13 +570,11 @@ struct ProfileCacheView: View {
         do {
             let events = try await ndk.cache.queryEvents(filter)
             
-            var profiles: [(String, NDKUserProfile)] = []
+            var profiles: [(String, NDKUserMetadata)] = []
             
             for event in events {
-                if let profileData = event.content.data(using: String.Encoding.utf8),
-                   let profile = try? JSONDecoder().decode(NDKUserProfile.self, from: profileData) {
-                    profiles.append((event.pubkey, profile))
-                }
+                let metadata = NDKUserMetadata(event: event)
+                profiles.append((event.pubkey, metadata))
             }
             
             await MainActor.run {
@@ -598,16 +596,16 @@ struct ProfileCacheView: View {
 // MARK: - Profile Cache Row
 struct ProfileCacheRow: View {
     let pubkey: String
-    let profile: NDKUserProfile
+    let metadata: NDKUserMetadata
     
     private var displayName: String {
-        profile.displayName ?? profile.name ?? String(pubkey.prefix(16)) + "..."
+        metadata.displayName ?? metadata.name ?? String(pubkey.prefix(16)) + "..."
     }
     
     var body: some View {
         HStack(spacing: 12) {
             // Avatar
-            if let picture = profile.picture, let url = URL(string: picture) {
+            if let picture = metadata.picture, let url = URL(string: picture) {
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
@@ -637,7 +635,7 @@ struct ProfileCacheRow: View {
                     .font(.subheadline)
                     .foregroundColor(.white)
                 
-                if let nip05 = profile.nip05 {
+                if let nip05 = metadata.nip05 {
                     Text(nip05)
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.7))

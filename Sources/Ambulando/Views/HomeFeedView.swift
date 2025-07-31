@@ -87,7 +87,8 @@ struct HomeFeedView: View {
                     isPlaying: isPlaying,
                     playbackProgress: playbackProgress,
                     playbackWaveformProgress: playbackWaveformProgress,
-                    replyingTo: appState.replyingTo
+                    replyingTo: appState.replyingTo,
+                    ndk: nostrManager.ndk
                 )
                 .transition(.opacity.combined(with: .scale))
             }
@@ -168,13 +169,13 @@ struct HomeFeedView: View {
             // Stream audio events
             // When a specific relay is selected, use networkOnly to ensure we only get events from that relay
             // (cached events don't store relay information, so exclusiveRelays can't filter them)
-            let dataSource: NDKDataSource<NDKEvent>
+            let dataSource: NDKSubscription<NDKEvent>
             if let relayUrls = relayUrls {
                 // Use networkOnly to ensure we only get events from the selected relay
-                dataSource = ndk.observe(filter: filter, maxAge: 0, cachePolicy: .networkOnly, relays: relayUrls, exclusiveRelays: true)
+                dataSource = ndk.subscribe(filter: filter, maxAge: 0, cachePolicy: .networkOnly, relays: relayUrls, exclusiveRelays: true)
             } else {
                 // For all relays, use cache for better performance
-                dataSource = ndk.observe(filter: filter, maxAge: 0, cachePolicy: .cacheWithNetwork)
+                dataSource = ndk.subscribe(filter: filter, maxAge: 0, cachePolicy: .cacheWithNetwork)
             }
             
             for await event in dataSource.events {
@@ -808,6 +809,7 @@ struct RecordingOverlay: View {
     let playbackProgress: TimeInterval
     let playbackWaveformProgress: Int
     let replyingTo: AudioEvent?
+    let ndk: NDK
     
     @State private var rotationAngle: Double = 0
     
@@ -846,10 +848,10 @@ struct RecordingOverlay: View {
                             .foregroundColor(Color.white.opacity(0.6))
                         
                         HStack {
-                            NDKUIProfilePicture(profileManager: nostrManager.ndk.profileManager, pubkey: replyingTo.author.pubkey, size: 32)
+                            NDKUIProfilePicture(ndk: ndk, pubkey: replyingTo.author.pubkey, size: 32)
                             
                             VStack(alignment: .leading) {
-                                NDKUIDisplayName(profileManager: nostrManager.ndk.profileManager, pubkey: replyingTo.author.pubkey)
+                                NDKUIDisplayName(ndk: ndk, pubkey: replyingTo.author.pubkey)
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(.white)
                                 
